@@ -46,7 +46,8 @@ public class BookingServiceImpl implements BookingService {
 				updateDto.getEndTime() != null ? updateDto.getEndTime() : foundBooking.getEndTime()
 		);
 		bookingMapper.updateBookingFromDto(foundBooking, updateDto);
-		checkFreeBookingResource(foundBooking.getResourceId(), foundBooking.getStartTime(), foundBooking.getEndTime());
+		if (updateDto.getResourceId() != null || updateDto.getStartTime() != null || updateDto.getEndTime() != null)
+			checkFreeBookingResource(foundBooking.getResourceId(), foundBooking.getStartTime(), foundBooking.getEndTime());
 		Booking updatedBooking = bookingRepository.save(foundBooking);
 		return updatedBooking;
 	}

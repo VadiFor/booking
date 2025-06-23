@@ -1,5 +1,6 @@
 package com.learn.java.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.learn.java.model.enums.StatusBooking;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,9 +28,11 @@ public class Booking {
 	private String resourceId;
 	
 	@Column(nullable = false)
+	@JsonFormat(pattern = "dd.MM.yyyy HH:mm")
 	private LocalDateTime startTime;
 	
 	@Column(nullable = false)
+	@JsonFormat(pattern = "dd.MM.yyyy HH:mm")
 	private LocalDateTime endTime;
 	
 	@Column(nullable = false)
@@ -39,5 +42,6 @@ public class Booking {
 	
 	@Column(nullable = false)
 	@Builder.Default
+	@JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
 	private LocalDateTime createDate = LocalDateTime.now();
 }
