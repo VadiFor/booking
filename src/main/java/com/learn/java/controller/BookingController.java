@@ -1,6 +1,7 @@
 package com.learn.java.controller;
 
 import com.learn.java.dto.BookingCreateRequestDto;
+import com.learn.java.dto.BookingDetailedDataDto;
 import com.learn.java.dto.BookingUpdateRequestDto;
 import com.learn.java.model.Booking;
 import com.learn.java.service.BookingService;
@@ -25,6 +26,11 @@ public class BookingController {
 		return bookingService.getById(id);
 	}
 	
+	@GetMapping("/detail/{id}")
+	public BookingDetailedDataDto getDetailBooking(@PathVariable String id) {
+		return bookingService.getDetailedDataBooking(id);
+	}
+	
 	@PostMapping
 	public Booking createBooking(@RequestBody BookingCreateRequestDto bookingCreateRequestDto) {
 		return bookingService.create(bookingCreateRequestDto);
@@ -34,6 +40,11 @@ public class BookingController {
 	public Booking updateBooking(@PathVariable String id,
 								 @RequestBody BookingUpdateRequestDto bookingUpdateRequestDto) {
 		return bookingService.update(id, bookingUpdateRequestDto);
+	}
+	
+	@PatchMapping("/cancel/{id}")
+	public String cancelBooking(@PathVariable String id) {
+		return bookingService.cancel(id);
 	}
 	
 	@DeleteMapping("/{id}")
