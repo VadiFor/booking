@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -20,6 +22,24 @@ public class GlobalExceptionHandler {
 		return ResponseEntity
 				.status(HttpStatus.NOT_FOUND)
 				.body(Map.of("error", ex.getMessage()));
+	}
+	
+	@ExceptionHandler(IncorrectDataException.class)
+	public ResponseEntity<Map<String, List<String>>> incorrectData(IncorrectDataException ex) {
+		List<String> incorrectData = Arrays.stream(ex.getMessage().split("\n")).toList();
+		log.info(incorrectData.toString());
+		return ResponseEntity
+				.status(HttpStatus.CONFLICT)
+				.body(Map.of("incorrect data", incorrectData));
+	}
+	
+	@ExceptionHandler(BookingOverlapException.class)
+	public ResponseEntity<Map<String, List<String>>> overlapBooking(BookingOverlapException ex) {
+		List<String> overlapData = Arrays.stream(ex.getMessage().split("\n")).toList();
+		log.info(ex.getMessage());
+		return ResponseEntity
+				.status(HttpStatus.CONFLICT)
+				.body(Map.of("error", overlapData));
 	}
 	
 	@ExceptionHandler(FeignException.class)
