@@ -5,6 +5,7 @@ import com.learn.java.client.UserClient;
 import com.learn.java.dto.*;
 import com.learn.java.exception.BookingOverlapException;
 import com.learn.java.exception.IncorrectDataException;
+import com.learn.java.kafka.ProducerKafka;
 import com.learn.java.mapper.BookingMapper;
 import com.learn.java.model.Booking;
 import com.learn.java.model.enums.StatusBooking;
@@ -24,6 +25,7 @@ public class BookingServiceImpl implements BookingService {
 	private final BookingMapper bookingMapper;
 	private final UserClient userClient;
 	private final ResourceClient resourceClient;
+	private final ProducerKafka producerKafka;
 	
 	@Override
 	public Booking create(BookingCreateRequestDto createDto) {
@@ -34,6 +36,8 @@ public class BookingServiceImpl implements BookingService {
 		Booking newBooking = bookingMapper.fromCreateDtoToBooking(createDto);
 		checkFreeBookingResource(newBooking.getResourceId(), newBooking.getStartTime(), newBooking.getEndTime());
 		bookingRepository.save(newBooking);
+		if (getUser(newBooking.getUserId()).getPosition().equals("TECHNICIAN"))
+			producerKafka.sendMessage("booking.service.resource.status", newBooking.getResourceId() + "-MAINTENANCE");
 		return newBooking;
 	}
 	
@@ -108,7 +112,7 @@ public class BookingServiceImpl implements BookingService {
 	}
 	
 	private void checkStatusResource(ResourceDto resourceDto) {
-		if (resourceDto.getStatus() != "ACTIVE")
+		if (!resourceDto.getStatus().equals("ACTIVE"))
 			throw new IncorrectDataException("Resource is not in the ACTIVE status");
 	}
 	
