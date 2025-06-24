@@ -99,12 +99,17 @@ public class BookingServiceImpl implements BookingService {
 	private void checkData(String userId, String resourceId, LocalDateTime startTime, LocalDateTime endTime) {
 		StringBuilder exMessage = new StringBuilder();
 		if (userId != null) getUser(userId);
-		if (resourceId != null) getResource(resourceId);
+		if (resourceId != null) checkStatusResource(getResource(resourceId));
 		if (startTime.isBefore(LocalDateTime.now()))
 			exMessage.append("StartTime must be later than the current time\n");
 		if (!startTime.isBefore(endTime)) exMessage.append("EndTime must be later than startTime\n");
 		if (exMessage.length() > 0)
 			throw new IncorrectDataException(exMessage.toString());
+	}
+	
+	private void checkStatusResource(ResourceDto resourceDto) {
+		if (resourceDto.getStatus() != "ACTIVE")
+			throw new IncorrectDataException("Resource is not in the ACTIVE status");
 	}
 	
 	private void checkFreeBookingResource(String resourceId, LocalDateTime startTime, LocalDateTime endTime) {
